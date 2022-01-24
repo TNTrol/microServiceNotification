@@ -11,11 +11,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class UserDto {
 
     @JsonProperty("preferred_username")
     private String login;
 
     @JsonProperty("role")
-    private List<Role> roles = new ArrayList<>();
+    private List<RoleDto> roles = new ArrayList<>();
 }
