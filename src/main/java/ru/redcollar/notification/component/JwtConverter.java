@@ -9,24 +9,25 @@ import ru.redcollar.notification.domain.Role;
 import ru.redcollar.notification.domain.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtConverter {
 
     public User parseJwt(String token) {
         try {
-            String[] split_string = token.split("\\.");
-            String base64EncodedBody = split_string[1];
-            Base64 base64Url = new Base64(true);
-            String body = new String(base64Url.decode(base64EncodedBody));
+            Claims body = Jwts.parser()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(body.getBytes());
             User user = new User();
-            user.setLogin(node.path("preferred_username").textValue());
-            node.path("role").elements().forEachRemaining(s->user.getRoles().add( new Role(s.textValue())));
+            user.setLogin(body.getSubject());
+            var a  = (ArrayList<LinkedHashMap>) body.get("role");
+            user.setRoles(a.stream().map( s -> new Role((String) s.get("name"))).collect(Collectors.toList()));
             return user;
-        } catch (JwtException | ClassCastException | IOException e) {
+        } catch (JwtException | ClassCastException e) {
             e.printStackTrace();
         }
         return null;
