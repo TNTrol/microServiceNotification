@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Mail {
+public class RoleDto {
 
-    private String subject;
-    private String email;
-    private String text;
+    private String name;
 }
